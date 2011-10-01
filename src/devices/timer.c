@@ -29,7 +29,7 @@ static intr_handler_func timer_interrupt;
 static bool too_many_loops (unsigned loops);
 static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
-bool less_time(struct list_elem *e1, struct list_elem *e2, void *aux UNUSED);
+bool less_time(const struct list_elem *e1,const struct list_elem *e2, void *aux UNUSED);
 void wakeup(void);
 
 /* Sets up the 8254 Programmable Interval Timer (PIT) to
@@ -44,7 +44,7 @@ struct alarm{
 };
 
 bool
-less_time(struct list_elem *e1, struct list_elem *e2, void *aux UNUSED){
+less_time(const struct list_elem *e1,const struct list_elem *e2, void *aux UNUSED){
   struct alarm *a1 = list_entry(e1, struct alarm, elem);
   struct alarm *a2 = list_entry(e2, struct alarm, elem);
 

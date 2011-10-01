@@ -86,13 +86,17 @@ static tid_t allocate_tid (void);
    finishes. */
 
 bool
-more_prio(struct list_elem *e1, struct list_elem *e2, void *aux UNUSED){
+more_prio(const struct list_elem *e1,const  struct list_elem *e2, void *aux UNUSED){
   struct thread *thr1 = list_entry(e1, struct thread, elem);
   struct thread *thr2 = list_entry(e2, struct thread, elem);
 
   return thr2->priority < thr1->priority;
 }
 
+void
+insert_readylist(struct thread *thr){
+  list_insert_ordered(&ready_list, &thr->elem, more_prio, NULL);
+}
   
 void
 thread_init (void) 
@@ -143,10 +147,6 @@ thread_tick (void)
 #endif
   else
     kernel_ticks++;
-
-  /* Enforce preemption. */
-  if (++thread_ticks >= TIME_SLICE)
-    intr_yield_on_return ();
 }
 
 /* Prints thread statistics. */
@@ -209,7 +209,7 @@ thread_create (const char *name, int priority,
 
   /* Add to run queue. */
   thread_unblock (t);
-
+  thread_yield();
   return tid;
 }
 
@@ -325,7 +325,18 @@ thread_yield (void)
 void
 thread_set_priority (int new_priority) 
 {
-  thread_current ()->priority = new_priority;
+  struct thread *curr = thread_current();
+  curr->priority = new_priority;
+  if(!list_empty(&curr->getlocks)){
+	struct list_elem *e;
+	for(e = list_begin(&curr->getlocks); e!=list_end(&curr->getlocks); e = list_next(e)){
+	  struct lock *l = list_entry(e,struct lock, elem);
+	  struct thread *thr = list_entry(list_begin(&l->semaphore.waiters), struct thread, elem);
+	  if(thr->priority > curr->priority) curr->priority = thr->priority;
+	}
+  }
+  curr->oldprio = new_priority;
+  thread_yield();
 }
 
 /* Returns the current thread's priority. */
@@ -450,6 +461,8 @@ init_thread (struct thread *t, const char *name, int priority)
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
+  t->oldprio = priority;
+  list_init(&t->getlocks);
   t->magic = THREAD_MAGIC;
 }
 
