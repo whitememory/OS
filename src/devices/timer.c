@@ -7,7 +7,8 @@
 #include "threads/io.h"
 #include "threads/synch.h"
 #include "threads/thread.h"
-  
+#include "threads/malloc.h"
+
 /* See [8254] for hardware details of the 8254 timer chip. */
 
 #if TIMER_FREQ < 19
@@ -28,11 +29,43 @@ static intr_handler_func timer_interrupt;
 static bool too_many_loops (unsigned loops);
 static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
+bool less_time(struct list_elem *e1, struct list_elem *e2, void *aux UNUSED);
+void wakeup(void);
 
 /* Sets up the 8254 Programmable Interval Timer (PIT) to
    interrupt PIT_FREQ times per second, and registers the
    corresponding interrupt. */
-  
+struct list alarms;
+
+struct alarm{
+  struct thread *thr;
+  int64_t end;
+  struct list_elem elem;
+};
+
+bool
+less_time(struct list_elem *e1, struct list_elem *e2, void *aux UNUSED){
+  struct alarm *a1 = list_entry(e1, struct alarm, elem);
+  struct alarm *a2 = list_entry(e2, struct alarm, elem);
+
+  return a1->end < a2->end;
+}
+
+void
+wakeup(void){
+  enum intr_level old_level = intr_disable();
+  if(!list_empty(&alarms)){
+	struct alarm *alr;
+	alr = list_entry(list_front(&alarms), struct alarm, elem);
+	if(alr->end <= timer_ticks()){
+	  thread_unblock(alr->thr);
+	  list_pop_front(&alarms);
+	  wakeup();
+	}
+  }
+  intr_set_level(old_level);
+}
+
 void
 timer_init (void) 
 {
@@ -45,6 +78,7 @@ timer_init (void)
   outb (0x40, count >> 8);
 
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
+  list_init(&alarms);
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
@@ -98,10 +132,19 @@ void
 timer_sleep (int64_t ticks) 
 {
   int64_t start = timer_ticks ();
+  int64_t endtime = start + ticks;
 
-  ASSERT (intr_get_level () == INTR_ON);
-  while (timer_elapsed (start) < ticks) 
-    thread_yield ();
+  enum intr_level old_level = intr_disable();
+
+  struct alarm *alr = (struct alarm *)malloc(sizeof(struct alarm));
+  alr->thr = thread_current();
+  alr->end = endtime;
+
+  list_insert_ordered(&alarms, &(alr->elem), less_time, NULL);
+  thread_block();
+  free(alr);
+
+  intr_set_level(old_level);
 }
 
 /* Suspends execution for approximately MS milliseconds. */
@@ -137,6 +180,7 @@ static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
+  wakeup();
   thread_tick ();
 }
 
