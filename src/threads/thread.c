@@ -84,6 +84,16 @@ static tid_t allocate_tid (void);
 
    It is not safe to call thread_current() until this function
    finishes. */
+
+bool
+more_prio(struct list_elem *e1, struct list_elem *e2, void *aux UNUSED){
+  struct thread *thr1 = list_entry(e1, struct thread, elem);
+  struct thread *thr2 = list_entry(e2, struct thread, elem);
+
+  return thr2->priority < thr1->priority;
+}
+
+  
 void
 thread_init (void) 
 {
@@ -98,6 +108,7 @@ thread_init (void)
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
 }
+
 
 /* Starts preemptive thread scheduling by enabling interrupts.
    Also creates the idle thread. */
@@ -235,7 +246,7 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_push_back (&ready_list, &t->elem);
+  list_insert_ordered (&ready_list, &t->elem, more_prio, NULL);
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
@@ -304,7 +315,7 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (curr != idle_thread) 
-    list_push_back (&ready_list, &curr->elem);
+    list_insert_ordered (&ready_list, &curr->elem, more_prio, NULL);
   curr->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
