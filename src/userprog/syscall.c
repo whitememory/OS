@@ -6,6 +6,8 @@
 #include "threads/synch.h"
 
 static void syscall_handler (struct intr_frame *);
+static int syswrite(int fd, const char *buf, unsigned length);
+
 static struct lock mutex;
 
 void
@@ -24,11 +26,9 @@ syscall_handler (struct intr_frame *f UNUSED)
   uint32_t number = *(uint32_t *)esp;
   switch(number){
     case SYS_OPEN:
-       
+      
     case SYS_WRITE:
-      if((int)*argv == STDOUT_FILENO)
-        putbuf((char *)(*(argv+1)), (*(argv+2)));
-      f->eax = -1; 
+      syswrite((int)*argv, (char*)*(argv+1), *(argv+2));
       break;
     case SYS_EXIT:{
       struct thread *t = thread_current();
@@ -45,3 +45,15 @@ syscall_handler (struct intr_frame *f UNUSED)
   return;  
 }
 
+static int
+syswrite(int fd, const char *buf, unsigned length){
+  int ret = -1;
+  if(fd==STDOUT_FILENO)
+    putbuf(buf, length);
+  return ret;
+}
+
+static int
+sysopen(char *fname){
+  return -1;
+}
