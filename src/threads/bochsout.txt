@@ -1,134 +1,99 @@
-00000000000i[     ] Bochs x86 Emulator 2.4.6
-00000000000i[     ]   Build from CVS snapshot, on February 22, 2011
-00000000000i[     ] Compiled at Sep 30 2011, 20:16:36
+00000000000i[     ] Bochs x86 Emulator 2.2.6
+00000000000i[     ]   Build from CVS snapshot on January 29, 2006
 00000000000i[     ] System configuration
-00000000000i[     ]   processors: 1 (cores=1, HT threads=1)
+00000000000i[     ]   processors: 1
 00000000000i[     ]   A20 line support: yes
+00000000000i[     ]   APIC support: no
 00000000000i[     ] CPU configuration
-00000000000i[     ]   level: 6
-00000000000i[     ]   SMP support: no
-00000000000i[     ]   APIC support: yes
-00000000000i[     ]   FPU support: yes
-00000000000i[     ]   MMX support: yes
+00000000000i[     ]   level: 5
+00000000000i[     ]   fpu support: yes
+00000000000i[     ]   paging support: yes, tlb enabled: yes
+00000000000i[     ]   mmx support: yes
+00000000000i[     ]   sse support: no
+00000000000i[     ]   v8086 mode support: yes
+00000000000i[     ]   VME support: yes
 00000000000i[     ]   3dnow! support: no
-00000000000i[     ]   SEP support: yes
-00000000000i[     ]   SSE support: sse2
-00000000000i[     ]   XSAVE support: no
-00000000000i[     ]   AES support: no
-00000000000i[     ]   MOVBE support: no
+00000000000i[     ]   PAE support: no
+00000000000i[     ]   PGE support: no
+00000000000i[     ]   PSE support: yes
 00000000000i[     ]   x86-64 support: no
-00000000000i[     ]   VMX support: no
+00000000000i[     ]   SEP support: no
 00000000000i[     ] Optimization configuration
+00000000000i[     ]   Guest2HostTLB support: no
 00000000000i[     ]   RepeatSpeedups support: no
-00000000000i[     ]   Trace cache support: no
+00000000000i[     ]   Icache support: no
+00000000000i[     ]   Host Asm support: yes
 00000000000i[     ]   Fast function calls: no
 00000000000i[     ] Devices configuration
-00000000000i[     ]   ACPI support: no
 00000000000i[     ]   NE2000 support: no
-00000000000i[     ]   PCI support: no, enabled=no
+00000000000i[     ]   PCI support: no
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
-00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0xb6bca008. after alignment, vector=0xb6bcb000
+00000000000i[     ]   VGA extension support:  
+00000000000i[MEM0 ] allocated memory at 0xb7235008. after alignment, vector=0xb7236000
 00000000000i[MEM0 ] 4.00MB
-00000000000i[MEM0 ] mem block size = 0x00100000, blocks=4
-00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
-00000000000i[MEM0 ] rom at 0xc0000/40448 ('/usr/local/share/bochs/VGABIOS-lgpl-latest')
+00000000000i[MEM0 ] rom at 0xffff0000/65536 ('/usr/local//share/bochs/BIOS-bochs-latest')
+00000000000i[MEM0 ] rom at 0xc0000/32768 ('/usr/local//share/bochs/VGABIOS-lgpl-latest')
 00000000000i[CMOS ] Using specified time for initial clock
 00000000000i[CMOS ] Setting initial clock to: Wed Dec 31 16:00:00 1969 (time0=0)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
-00000000000i[VGA  ] interval=50000
-00000000000i[MEM0 ] Register memory access handlers: 0x00000000000a0000 - 0x00000000000bffff
-00000000000i[MEM0 ] Register memory access handlers: 0x00000000e0000000 - 0x00000000e0ffffff
-00000000000i[VGA  ] VBE Bochs Display Extension Enabled
-00000000000i[     ] init_dev of 'unmapped' plugin device by virtual method
-00000000000i[     ] init_dev of 'biosdev' plugin device by virtual method
-00000000000i[     ] init_dev of 'speaker' plugin device by virtual method
-00000000000i[SPEAK] Failed to open /dev/console: Permission denied
-00000000000i[SPEAK] Deactivating beep on console
-00000000000i[     ] init_dev of 'extfpuirq' plugin device by virtual method
-00000000000i[     ] init_dev of 'ioapic' plugin device by virtual method
-00000000000i[IOAP ] initializing I/O APIC
-00000000000i[MEM0 ] Register memory access handlers: 0x00000000fec00000 - 0x00000000fec00fff
-00000000000i[     ] init_dev of 'keyboard' plugin device by virtual method
-00000000000i[KBD  ] will paste characters every 1000 keyboard ticks
+00000000000i[VGA  ] interval=40000
+00000000000i[     ] init_mem of 'harddrv' plugin device by virtual method
+00000000000i[     ] init_mem of 'keyboard' plugin device by virtual method
+00000000000i[     ] init_mem of 'serial' plugin device by virtual method
+00000000000i[     ] init_mem of 'parallel' plugin device by virtual method
+00000000000i[     ] init_mem of 'extfpuirq' plugin device by virtual method
+00000000000i[     ] init_mem of 'speaker' plugin device by virtual method
 00000000000i[     ] init_dev of 'harddrv' plugin device by virtual method
-00000000000i[HD   ] HD on ata0-0: '/tmp/qKOfnWvuIn.dsk', 'flat' mode
+00000000000i[HD   ] HD on ata0-0: '/tmp/HwMes2BbtU.dsk' 'flat' mode 
 00000000000i[HD   ] Using boot sequence disk, none, none
 00000000000i[HD   ] Floppy boot signature check is enabled
+00000000000i[     ] init_dev of 'keyboard' plugin device by virtual method
+00000000000i[KBD  ] will paste characters every 1000 keyboard ticks
 00000000000i[     ] init_dev of 'serial' plugin device by virtual method
 00000000000i[SER  ] com1 at 0x03f8 irq 4
 00000000000i[     ] init_dev of 'parallel' plugin device by virtual method
 00000000000i[PAR  ] parallel port 1 at 0x0378 irq 7
-00000000000i[     ] register state of 'unmapped' plugin device by virtual method
-00000000000i[     ] register state of 'biosdev' plugin device by virtual method
-00000000000i[     ] register state of 'speaker' plugin device by virtual method
-00000000000i[     ] register state of 'extfpuirq' plugin device by virtual method
-00000000000i[     ] register state of 'ioapic' plugin device by virtual method
-00000000000i[     ] register state of 'keyboard' plugin device by virtual method
-00000000000i[     ] register state of 'harddrv' plugin device by virtual method
-00000000000i[     ] register state of 'serial' plugin device by virtual method
-00000000000i[     ] register state of 'parallel' plugin device by virtual method
-00000000000i[SYS  ] bx_pc_system_c::Reset(HARDWARE) called
-00000000000i[CPU0 ] cpu hardware reset
-00000000000i[APIC0] allocate APIC id=0 (MMIO enabled) to 0x00000000fee00000
-00000000000i[CPU0 ] CPUID[0x00000000]: 00000003 756e6547 6c65746e 49656e69
-00000000000i[CPU0 ] CPUID[0x00000001]: 00000f03 00000800 00000000 07cbfbff
-00000000000i[CPU0 ] CPUID[0x00000002]: 00410601 00000000 00000000 00000000
-00000000000i[CPU0 ] CPUID[0x00000003]: 00000000 00000000 00000000 00000000
-00000000000i[CPU0 ] CPUID[0x00000004]: 00000000 00000000 00000000 00000000
-00000000000i[CPU0 ] CPUID[0x00000007]: 00000000 00000000 00000000 00000000
-00000000000i[CPU0 ] CPUID[0x80000000]: 80000004 00000000 00000000 00000000
-00000000000i[CPU0 ] CPUID[0x80000001]: 00000000 00000000 00000000 00000000
-00000000000i[CPU0 ] CPUID[0x80000002]: 20202020 20202020 20202020 6e492020
-00000000000i[CPU0 ] CPUID[0x80000003]: 286c6574 50202952 69746e65 52286d75
-00000000000i[CPU0 ] CPUID[0x80000004]: 20342029 20555043 20202020 00202020
-00000000000i[     ] reset of 'unmapped' plugin device by virtual method
-00000000000i[     ] reset of 'biosdev' plugin device by virtual method
-00000000000i[     ] reset of 'speaker' plugin device by virtual method
-00000000000i[     ] reset of 'extfpuirq' plugin device by virtual method
-00000000000i[     ] reset of 'ioapic' plugin device by virtual method
-00000000000i[     ] reset of 'keyboard' plugin device by virtual method
+00000000000i[     ] init_dev of 'extfpuirq' plugin device by virtual method
+00000000000i[     ] init_dev of 'speaker' plugin device by virtual method
+00000000000i[SPEAK] Failed to open /dev/console: Permission denied
+00000000000i[SPEAK] Deactivating beep on console
 00000000000i[     ] reset of 'harddrv' plugin device by virtual method
+00000000000i[     ] reset of 'keyboard' plugin device by virtual method
 00000000000i[     ] reset of 'serial' plugin device by virtual method
 00000000000i[     ] reset of 'parallel' plugin device by virtual method
-00000003305i[BIOS ] $Revision: 1.257 $ $Date: 2011/01/26 09:52:02 $
-00000316560i[KBD  ] reset-disable command received
-00000441798i[VBIOS] VGABios $Id: vgabios.c,v 1.69 2009/04/07 18:18:20 vruppert Exp $
-00000441869i[VGA  ] VBE known Display Interface b0c0
-00000441901i[VGA  ] VBE known Display Interface b0c5
-00000444826i[VBIOS] VBE Bios $Id: vbe.c,v 1.62 2009/01/25 15:46:25 vruppert Exp $
-00000757515i[BIOS ] Starting rombios32
-00000758012i[BIOS ] Shutdown flag 0
-00000758680i[BIOS ] ram_size=0x00400000
-00000759131i[BIOS ] ram_end=4MB
-00000770135i[BIOS ] Found 1 cpu(s)
-00000789122i[BIOS ] bios_table_addr: 0x000fb928 end=0x000fcc00
-00000801799i[BIOS ] bios_table_cur_addr: 0x000fb928
-00000813966i[BIOS ] ata0-0: PCHS=1/16/63 translation=none LCHS=1/16/63
-00004695413i[BIOS ] IDE time out
-00007718734i[BIOS ] Booting from 0000:7c00
-00017999535p[UNMP ] >>PANIC<< Shutdown port: shutdown requested
-00017999535i[CPU0 ] CPU is in protected mode (active)
-00017999535i[CPU0 ] CS.d_b = 32 bit
-00017999535i[CPU0 ] SS.d_b = 32 bit
-00017999535i[CPU0 ] | EAX=0000006e  EBX=c010b8b4  ECX=c002ff8e  EDX=ffff8900
-00017999535i[CPU0 ] | ESP=c002ff70  EBP=c002ff98  ESI=c010c499  EDI=c002ff90
-00017999535i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af pf cf
-00017999535i[CPU0 ] | SEG selector     base    limit G D
-00017999535i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00017999535i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00017999535i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00017999535i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00017999535i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00017999535i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00017999535i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00017999535i[CPU0 ] | EIP=c010009c (c010009b)
-00017999535i[CPU0 ] | CR0=0xe0010015 CR2=0x00000000
-00017999535i[CPU0 ] | CR3=0x00112000 CR4=0x00000000
-00017999535i[CPU0 ] 0xc010009b>> out dx, al : EE
-00017999535i[CMOS ] Last time is 17 (Wed Dec 31 16:00:17 1969)
-00017999535i[NGUI ] bx_nogui_gui_c::exit() not implemented yet.
-00017999535i[     ] restoring default signal behavior
-00017999535i[CTRL ] quit_sim called with exit code 1
+00000000000i[     ] reset of 'extfpuirq' plugin device by virtual method
+00000000000i[     ] reset of 'speaker' plugin device by virtual method
+00000003740i[BIOS ] $Revision: 1.160 $ $Date: 2006/01/25 17:51:49 $
+00000317563i[KBD  ] reset-disable command received
+00000425250i[VBIOS] VGABios $Id: vgabios.c,v 1.63 2005/12/26 19:50:26 vruppert Exp $
+00000428257i[VBIOS] VBE Bios $Id: vbe.c,v 1.48 2005/12/26 19:50:26 vruppert Exp $
+00000737822i[BIOS ] ata0-0: PCHS=1/16/63 translation=none LCHS=1/16/63
+00000786523e[HD   ] ata0: device set to 1 which does not exist
+00000786815e[HD   ] ata1: device set to 0 which does not exist
+00000787108e[HD   ] ata1: device set to 1 which does not exist
+00001952092p[UNMP ] >>PANIC<< Shutdown port: shutdown requested
+00001952092i[SYS  ] Last time is 1
+00001952092i[NGUI ] bx_nogui_gui_c::exit() not implemented yet.
+00001952092i[CPU  ] protected mode
+00001952092i[CPU  ] CS.d_b = 32 bit
+00001952092i[CPU  ] SS.d_b = 32 bit
+00001952092i[CPU  ] | EAX=0000006e  EBX=c002ffa7  ECX=ffff8900  EDX=ffff8900
+00001952092i[CPU  ] | ESP=c002ff90  EBP=c002ffb8  ESI=00007369  EDI=c0111000
+00001952092i[CPU  ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af pf cf
+00001952092i[CPU  ] | SEG selector     base    limit G D
+00001952092i[CPU  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00001952092i[CPU  ] |  CS:0008( 0001| 0|  0) 00000000 000fffff 1 1
+00001952092i[CPU  ] |  DS:0010( 0002| 0|  0) 00000000 000fffff 1 1
+00001952092i[CPU  ] |  SS:0010( 0002| 0|  0) 00000000 000fffff 1 1
+00001952092i[CPU  ] |  ES:0010( 0002| 0|  0) 00000000 000fffff 1 1
+00001952092i[CPU  ] |  FS:0010( 0002| 0|  0) 00000000 000fffff 1 1
+00001952092i[CPU  ] |  GS:0010( 0002| 0|  0) 00000000 000fffff 1 1
+00001952092i[CPU  ] | EIP=c0100679 (c0100678)
+00001952092i[CPU  ] | CR0=0x80010015 CR1=0 CR2=0x00000000
+00001952092i[CPU  ] | CR3=0x00113000 CR4=0x00000000
+00001952092i[CPU  ] >> ee
+00001952092i[CPU  ] >> : out dx, al
+00001952092i[     ] restoring default signal behavior
+00001952092i[CTRL ] quit_sim called with exit code 1

@@ -50,16 +50,57 @@ process_execute (const char *file_name)
 static void
 start_process (void *f_name)
 {
+  struct thread *t = thread_current();
   char *file_name = f_name;
   struct intr_frame if_;
   bool success;
 
+  char *token, *save_ptr;
+  char *page_file;
+  uint32_t *page_esp;
+  void *page_top;
+  int filelen = strlen(file_name);
+  int argc = 1;
+  int i;
+
+  for(i=0; i<filelen; ++i){
+    if(file_name[i]==' ')
+      ++argc;
+  }
+  token = strtok_r(file_name," ",&save_ptr);
+  
   /* Initialize interrupt frame and load executable. */
   memset (&if_, 0, sizeof if_);
   if_.gs = if_.fs = if_.es = if_.ds = if_.ss = SEL_UDSEG;
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
-  success = load (file_name, &if_.eip, &if_.esp);
+  
+  success = load (token, &if_.eip, &if_.esp);
+
+  /*-----------------------------------*/
+  file_name[strlen(token)]=' ';
+
+  page_top = pagedir_get_page(t->pagedir, if_.esp-PGSIZE)+PGSIZE;
+  page_file = page_top - (filelen +1);
+  page_esp = page_top - (filelen + (argc+1)*4 + 16 - filelen%4);
+  if_.esp = if_.esp - (page_top - (void *)page_esp);
+
+  memcpy(page_file, f_name, filelen+1);
+  
+  page_esp = page_esp+1;
+  *page_esp = argc;
+  page_esp = page_esp+1;
+  *page_esp = if_.esp+12;
+
+  token = strtok_r(page_file," ",&save_ptr);
+  while(token!=NULL){
+    page_esp = page_esp+1;
+    *page_esp = PHYS_BASE - (page_top - (void *)token);
+    token = strtok_r(NULL," ", &save_ptr);
+  }
+
+  page_esp = page_esp+1;
+  /*-----------------------------------*/
 
   /* If load failed, quit. */
   palloc_free_page (file_name);
@@ -88,6 +129,8 @@ start_process (void *f_name)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
+  int k = 0;
+  while(k<10000000){ k++; } 
   return -1;
 }
 
@@ -304,6 +347,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
   /* Set up stack. */
   if (!setup_stack (esp))
     goto done;
+
 
   /* Start address. */
   *eip = (void (*) (void)) ehdr.e_entry;
