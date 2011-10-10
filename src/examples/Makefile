@@ -16,6 +16,7 @@ hex-dump_SRC = hex-dump.c
 insult_SRC = insult.c
 lineup_SRC = lineup.c
 ls_SRC = ls.c
+test_SRC = test.c
 recursor_SRC = recursor.c
 rm_SRC = rm.c
 

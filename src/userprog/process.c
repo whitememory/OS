@@ -29,6 +29,7 @@ tid_t
 process_execute (const char *file_name) 
 {
   char *fn_copy;
+  char *save_ptr;
   tid_t tid;
 
   /* Make a copy of FILE_NAME.
@@ -37,6 +38,7 @@ process_execute (const char *file_name)
   if (fn_copy == NULL)
     return TID_ERROR;
   strlcpy (fn_copy, file_name, PGSIZE);
+  file_name = strtok_r(file_name, " ", &save_ptr);
 
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
@@ -64,8 +66,10 @@ start_process (void *f_name)
   int i;
 
   for(i=0; i<filelen; ++i){
-    if(file_name[i]==' ')
+    if(file_name[i]==' '){
+      while(file_name[i]==' '){i++;}
       ++argc;
+    }
   }
   token = strtok_r(file_name," ",&save_ptr);
   
@@ -90,15 +94,14 @@ start_process (void *f_name)
   page_esp = page_esp+1;
   *page_esp = argc;
   page_esp = page_esp+1;
-  *page_esp = if_.esp+12;
+  *page_esp = (uint32_t)(if_.esp+12);
 
   token = strtok_r(page_file," ",&save_ptr);
   while(token!=NULL){
     page_esp = page_esp+1;
-    *page_esp = PHYS_BASE - (page_top - (void *)token);
+    *page_esp = (uint32_t)(PHYS_BASE - (page_top - (void *)token));
     token = strtok_r(NULL," ", &save_ptr);
   }
-
   page_esp = page_esp+1;
   /*-----------------------------------*/
 
@@ -130,7 +133,7 @@ int
 process_wait (tid_t child_tid UNUSED) 
 {
   int k = 0;
-  while(k<10000000){ k++; } 
+  while(k<10000000){k++;}
   return -1;
 }
 
