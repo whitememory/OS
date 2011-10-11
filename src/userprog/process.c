@@ -133,7 +133,7 @@ int
 process_wait (tid_t child_tid UNUSED) 
 {
   int k = 0;
-  while(k<10000000){k++;}
+  while(k<100000000){k++;}
   return -1;
 }
 
