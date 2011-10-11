@@ -6,13 +6,17 @@
 #include "threads/synch.h"
 #include "threads/malloc.h"
 #include "filesys/filesys.h"
+#include "filesys/file.h"
 
 bool less_fd(const struct list_elem *e1, const struct list_elem *e2, void *aux); 
 int getSmallestFd(void);
+struct fileDesc* find_file_by_fd(int fd);
 
 static void syscall_handler (struct intr_frame *);
 static int syswrite(int fd, const char *buf, unsigned length);
+static int sysread(int fd, char *buf, unsigned length);
 static int sysopen(const char *fname);
+static void sysclose(int fd);
 
 static struct lock mutex;
 struct list fdList;
@@ -34,18 +38,27 @@ static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
   lock_acquire(&mutex);
+  int ret = -1;
   void *esp = f->esp;
   uint32_t *argv = (f->esp+4);
   uint32_t number = *(uint32_t *)esp;
   struct thread *t = thread_current();
   switch(number){
+    case SYS_CLOSE:
+      sysclose((int)*argv);
+      break;
+
     case SYS_OPEN:
-      sysopen((char*)*argv);
+      ret = sysopen((char*)*argv);
       break;
 
     case SYS_WRITE:
-      syswrite((int)*argv, (char*)*(argv+1), *(argv+2));
+      ret = syswrite((int)*argv, (char*)*(argv+1), *(argv+2));
       break;
+
+    case SYS_READ:
+     ret = sysreaed((int)*argv, (char*)*(argv+1), *(argv+2));
+     break;
 
     case SYS_EXIT:
       printf("%s: exit(0)\n",t->name);
@@ -56,8 +69,8 @@ syscall_handler (struct intr_frame *f UNUSED)
       break;
   }
 
+  f->eax = ret;
   lock_release(&mutex);
-  
   return;  
 }
 
@@ -70,11 +83,17 @@ syswrite(int fd, const char *buf, unsigned length){
 }
 
 static int
+sysread(int fd, char *buf, unsigned length){
+  int ret = -1;
+  return ret;
+}
+
+int
 sysopen(const char *fname){
   struct file *f;
   struct fileDesc *fDesc = (struct fileDesc*)malloc(sizeof(struct fileDesc));
   f = filesys_open(fname);
-  if(f==NULL){
+  if(!f){
     free(fDesc);
     return -1;
   }
@@ -83,6 +102,21 @@ sysopen(const char *fname){
   list_insert_ordered(&fdList, &fDesc->elem, less_fd,NULL);
   return fDesc->fd;
 }
+
+
+static void
+sysclose(int fd){
+  struct fileDesc *f;
+  f = find_file_by_fd(fd);
+  if(f==NULL)
+    return;
+  file_close(f->file);
+  list_remove(&f->elem);
+  free(f);
+}
+  
+//-------------------------------------------------------------------
+
 
 int
 getSmallestFd(){
@@ -99,8 +133,17 @@ getSmallestFd(){
   return fd;
 }
 
-
-
+struct fileDesc *
+find_file_by_fd(int fd){
+  struct list_elem *e;
+  struct fileDesc *f;
+  for(e = list_begin(&fdList); e!= list_end(&fdList); e=list_next(e)){
+    f = list_entry(e,struct fileDesc, elem);
+    if(f->fd == fd)
+      return f;
+  }
+  return NULL;
+}
 
 bool
 less_fd(const struct list_elem *e1, const struct list_elem *e2, void *aux UNUSED){
