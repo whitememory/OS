@@ -1,12 +1,16 @@
 #include "userprog/syscall.h"
+#include "userprog/pagedir.h"
 #include <stdio.h>
 #include <syscall-nr.h>
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 #include "threads/synch.h"
 #include "threads/malloc.h"
+#include "threads/vaddr.h"
 #include "filesys/filesys.h"
 #include "filesys/file.h"
+#include "filesys/directory.h"
+#include "filesys/inode.h"
 #include "devices/input.h"
 
 bool less_fd(const struct list_elem *e1, const struct list_elem *e2, void *aux); 
@@ -19,6 +23,7 @@ static int sysread(int fd, char *buf, unsigned length);
 static int sysopen(const char *fname);
 static bool syscreate(const char *file, unsigned size);
 static void sysclose(int fd);
+static void sysexit(int status);
 
 static struct lock mutex;
 struct list fdList;
@@ -39,15 +44,39 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
+  struct thread *t = thread_current();
   lock_acquire(&mutex);
   int ret = -1;
   void *esp = f->esp;
   uint32_t *argv = (f->esp+4);
+  if(pagedir_get_page(t->pagedir, esp)==NULL || pagedir_get_page(t->pagedir,esp+12 )==NULL)
+    sysexit(-1);
   uint32_t number = *(uint32_t *)esp;
-  struct thread *t = thread_current();
+  
   switch(number){
+    case SYS_HALT:
+      break;
+
+    case SYS_EXEC:
+      break;
+
+    case SYS_WAIT:
+      break;
+
+    case SYS_REMOVE:
+      break;
+
+    case SYS_FILESIZE:
+      break;
+
+    case SYS_SEEK:
+      break;
+
+    case SYS_TELL:
+      break;
+
     case SYS_CREATE:
-      syscreate((char *)*argv, (int)*(argv+1));
+      ret = syscreate((char *)*argv, (int)*(argv+1));
       break;
 
     case SYS_CLOSE:
@@ -67,11 +96,11 @@ syscall_handler (struct intr_frame *f UNUSED)
      break;
 
     case SYS_EXIT:
-      printf("%s: exit(0)\n",t->name);
-      thread_exit();
+      sysexit((int)*argv);
       break;
 
     default:
+      sysexit(-1);
       break;
   }
 
@@ -80,9 +109,21 @@ syscall_handler (struct intr_frame *f UNUSED)
   return;  
 }
 
+static void
+sysexit(int status){
+  struct thread *t = thread_current();
+  printf("%s: exit(%d)\n", t->name, status);
+  thread_exit();
+}
+
 static int
 syswrite(int fd, const char *buf, unsigned length){
   int ret = -1;
+  if(pagedir_get_page(thread_current()->pagedir,buf)==NULL || pagedir_get_page(thread_current()->pagedir,buf+length)==NULL)
+    sysexit(-1);
+  //if(buf==NULL)
+  //  sysexit(-1);
+
   if(fd==STDOUT_FILENO)
     putbuf(buf, length);
   else if(fd==STDIN_FILENO)
@@ -99,6 +140,11 @@ syswrite(int fd, const char *buf, unsigned length){
 static int
 sysread(int fd, char *buf, unsigned length){
   int ret = -1;
+  if(!is_user_vaddr(buf+length) )
+    sysexit(-1);
+  if(buf==NULL)
+    sysexit(-1);
+
   if(fd==STDOUT_FILENO)
     return -1;
   else if(fd==STDIN_FILENO){
@@ -113,11 +159,6 @@ sysread(int fd, char *buf, unsigned length){
     if(f==NULL)
       return -1;
     ret = file_read(f->file, buf, length);
-    /*while(read!=0 || length != 0){
-      read = file_read(f->file,buf+ret,length);
-      ret += read;
-      length -= read;
-    }*/
   }
     
   return ret;
@@ -127,6 +168,8 @@ int
 sysopen(const char *fname){
   struct file *f;
   struct fileDesc *fDesc = (struct fileDesc*)malloc(sizeof(struct fileDesc));
+  if(fname ==NULL)
+    sysexit(-1);
   f = filesys_open(fname);
   if(!f){
     free(fDesc);
@@ -140,8 +183,18 @@ sysopen(const char *fname){
 
 static bool 
 syscreate(const char *file, unsigned size){
+  if(file==NULL)
+    sysexit(-1);
   if(!file)
     return false;
+  struct inode *inode = NULL;
+  struct dir *dir = dir_open_root();
+  if(dir != NULL){
+    if(dir_lookup(dir_open_root(),file, &inode)){
+      inode_close(inode);
+      return false;
+    }
+  }
   return filesys_create(file, size);
 }
 

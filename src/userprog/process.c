@@ -71,7 +71,6 @@ start_process (void *f_name)
       ++argc;
     }
   }
-  token = strtok_r(file_name," ",&save_ptr);
   
   /* Initialize interrupt frame and load executable. */
   memset (&if_, 0, sizeof if_);
@@ -79,11 +78,9 @@ start_process (void *f_name)
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
   
-  success = load (token, &if_.eip, &if_.esp);
+  success = load (t->name, &if_.eip, &if_.esp);
 
   /*-----------------------------------*/
-  file_name[strlen(token)]=' ';
-
   page_top = pagedir_get_page(t->pagedir, if_.esp-PGSIZE)+PGSIZE;
   page_file = page_top - (filelen +1);
   page_esp = page_top - (filelen + (argc+1)*4 + 16 - filelen%4);
